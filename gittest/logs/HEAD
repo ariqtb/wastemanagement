@@ -1,0 +1,11 @@
+0000000000000000000000000000000000000000 01a29906c223e3b8f8d4297b0ae7058b536dbbba ariqtb <ariq.tn15@gmail.com> 1679280568 +0700	initial pull
+01a29906c223e3b8f8d4297b0ae7058b536dbbba 01a29906c223e3b8f8d4297b0ae7058b536dbbba ariqtb <ariq.tn15@gmail.com> 1679304884 +0700	checkout: moving from history-waste to sorting-waste
+01a29906c223e3b8f8d4297b0ae7058b536dbbba abe1aa25921a8b88a3739b67e3dbe2321afd34f9 ariqtb <ariq.tn15@gmail.com> 1679304997 +0700	commit: photo upload, sorting waste
+abe1aa25921a8b88a3739b67e3dbe2321afd34f9 c4f2d3716d92ccead54557d06c50e30857f3b57d ariqtb <ariq.tn15@gmail.com> 1679905531 +0700	commit: upload to db prob left
+c4f2d3716d92ccead54557d06c50e30857f3b57d d72562f8e48ee5123e1a28f38e812198def1f122 ariqtb <ariq.tn15@gmail.com> 1679993910 +0700	commit: success upload to db, image left
+d72562f8e48ee5123e1a28f38e812198def1f122 0a81b72024d5f07749599de144b3ad85acfd4684 ariqtb <ariq.tn15@gmail.com> 1680252782 +0700	commit: done with storing data and image itself
+0a81b72024d5f07749599de144b3ad85acfd4684 0a81b72024d5f07749599de144b3ad85acfd4684 ariqtb <ariq.tn15@gmail.com> 1680511716 +0700	checkout: moving from sorting-waste to irt-user
+0a81b72024d5f07749599de144b3ad85acfd4684 02cd05fb89a9a4234c38ae9581551d985ed3f3d5 ariqtb <ariq.tn15@gmail.com> 1680511748 +0700	commit: irt user feature
+02cd05fb89a9a4234c38ae9581551d985ed3f3d5 02cd05fb89a9a4234c38ae9581551d985ed3f3d5 ariqtb <ariq.tn15@gmail.com> 1681117400 +0700	checkout: moving from irt-user to pengepul-simplified
+02cd05fb89a9a4234c38ae9581551d985ed3f3d5 cd7509b396018df6137eadf86dbe59321ed528fb ariqtb <ariq.tn15@gmail.com> 1681117455 +0700	commit: simplelin pengepul klik-recap-photo
+cd7509b396018df6137eadf86dbe59321ed528fb 173a512cd7bd7e509292b00973e77fcdc49a8f81 ariqtb <ariq.tn15@gmail.com> 1681705997 +0700	commit: pengepul-done-v1

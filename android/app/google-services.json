@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "36599718108",
+    "firebase_url": "https://waste-management-flutter-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "waste-management-flutter",
+    "storage_bucket": "waste-management-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:36599718108:android:aa430a85e4384d093e1419",
+        "android_client_info": {
+          "package_name": "com.example.testing_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "36599718108-ub2865rstvtgsa0chkm4saect5a1scef.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQO3r_GtlFZkfz_DP0SaprP25qMfChVNc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "36599718108-ub2865rstvtgsa0chkm4saect5a1scef.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
