@@ -3,18 +3,18 @@ import 'package:geolocator/geolocator.dart';
 import 'package:namer_app/geolocator.dart';
 import '../../providers/imagePicker.dart';
 import '../../components/alert.dart';
-import 'recap_weight2.dart';
+import 'recap_weight3.dart';
 
-class RecapImage extends StatefulWidget {
+class RecapImage2 extends StatefulWidget {
   final List<Map<String, dynamic>> photoList;
   final String idWaste;
-  const RecapImage({super.key, required this.photoList, required this.idWaste});
+  const RecapImage2({super.key, required this.photoList, required this.idWaste});
 
   @override
-  State<RecapImage> createState() => _RecapImageState();
+  State<RecapImage2> createState() => _RecapImage2State();
 }
 
-class _RecapImageState extends State<RecapImage> {
+class _RecapImage2State extends State<RecapImage2> {
   bool isLoading = false;
   String wasteid = '';
   List<Map<String, dynamic>> photoList = [];
@@ -94,7 +94,7 @@ class _RecapImageState extends State<RecapImage> {
                       //     width: 2.0,
                       //   ),
                       // ),
-                      child: Image.file(imageUrl, fit: BoxFit.cover),
+                      child: Image.network(imageUrl, fit: BoxFit.cover),
                     ),
                   ],
                   // ),

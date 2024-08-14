@@ -40,8 +40,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   Future<void> loginFunc(String email, password) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('email', email);
-    await prefs.setString('role', 'Pengepul');
     try {
       Response response = await http.post(Uri.parse("${API_URL}/login"), body: {
         'email': email.toLowerCase(),
@@ -66,19 +64,16 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
           await prefs.setString('jalur', '');
         }
       } else {
-        await prefs.setString('email', 'maman@mail.com');
-        await prefs.setString('role', 'Pengepul');
-        // await showDialogError(context, [
-        //   ...[
-        //     'Gagal masuk',
-        //     'Silahkan cek kembali email dan password yang terdaftar',
-        //     response.statusCode.toString()
-        //   ]
-        // ]);
+        await showDialogError(context, [
+          ...[
+            'Gagal masuk',
+            'Silahkan cek kembali email dan password yang terdaftar',
+            response.statusCode.toString()
+          ]
+        ]);
         setState(() {
           loading = false;
           logged = false;
-          role = 'Pengepul';
         });
         print(response.body);
       }

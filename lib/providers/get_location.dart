@@ -325,6 +325,11 @@ Future<void> addLocationWaste(listProdusen, location) async {
     closestLocation["distance"] = distanceInMeters;
     closestLocation['status'] = 1;
     // print("distanceInMeters: ${distanceInMeters}");
+  } else{
+    closestLocation["info"] = "Data sampah terdaftar";
+    closestLocation["distance"] = distanceInMeters;
+    closestLocation['status'] = 1;
+
   }
   // print("INI CLOSEST LOCATION: ${closestLocation}");
   try {

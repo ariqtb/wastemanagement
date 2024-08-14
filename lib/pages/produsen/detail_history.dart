@@ -24,15 +24,20 @@ class DetailHistoryPickup extends StatelessWidget {
 
     List<Map<String, dynamic>> location =
         history['image'].cast<Map<String, dynamic>>();
-    print(location.runtimeType);
+    print(location);
     List<DataRow> dataRows = location.map((row) {
       String typePhoto = row['typePhoto'];
-      double weight = row['weight'].toDouble();
+        String? weight;
+      if(row['weight'] != null) {
+        weight = row['weight'].toString();
+      } else {
+        weight = "Tidak Terdaftar";
+      }
       int index = location.indexOf(row) + 1;
       return DataRow(cells: [
         DataCell(Center(child: Text('${index}'))),
         DataCell(Center(child: Text('${typePhoto}'))),
-        DataCell(Center(child: Text('${weight}'))),
+        // DataCell(Center(child: Text('${weight}'))),
       ]);
     }).toList();
 
@@ -162,6 +167,7 @@ class DetailHistoryPickup extends StatelessWidget {
                 margin: EdgeInsets.fromLTRB(0, 30, 0, 0),
                 child: Text("Pemilahan Sampah: "),
               ),
+              location.length != 0 ?
               Container(
                   alignment: Alignment.topCenter,
                   margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
@@ -177,42 +183,46 @@ class DetailHistoryPickup extends StatelessWidget {
                         columns: [
                           DataColumn(label: Text('No.')),
                           DataColumn(label: Text('Jenis Sampah')),
-                          DataColumn(label: Text('Berat Sampah')),
+                          // DataColumn(label: Text('Berat Sampah')),
                         ],
                         rows: dataRows),
-                  ))),
-              Container(
+                  ))) :
+                   Container(
                 margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                child: Text("Foto Sampah: "),
+                child: Text("Sampah Tidak Dipilah"),
               ),
-              Row(
-                children: imageFilenames.map((image) {
-                  int index = imageFilenames.indexOf(image);
-                  final imageUrl =
-                      "${API_URL}/images/${imageFilenames[index]['filename']}";
-                  return Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                              color: Colors.green.shade100, width: 2),
-                        ),
-                        margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
-                        height: 110,
-                        width: 75,
-                        child: Image.network(
-                          imageUrl,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      Text(
-                        '${imageFilenames[index]['typePhoto']}',
-                        style: TextStyle(fontFamily: "Opensans", fontSize: 12),
-                      ),
-                    ],
-                  );
-                }).toList(),
-              ),
+              // Container(
+              //   margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+              //   child: Text("Foto Sampah: "),
+              // ),
+              // Row(
+              //   children: imageFilenames.map((image) {
+              //     int index = imageFilenames.indexOf(image);
+              //     final imageUrl =
+              //         "${API_URL}/images/${imageFilenames[index]['filename']}";
+              //     return Column(
+              //       children: [
+              //         Container(
+              //           decoration: BoxDecoration(
+              //             border: Border.all(
+              //                 color: Colors.green.shade100, width: 2),
+              //           ),
+              //           margin: EdgeInsets.fromLTRB(5, 5, 5, 0),
+              //           height: 110,
+              //           width: 75,
+              //           child: Image.network(
+              //             imageUrl,
+              //             fit: BoxFit.cover,
+              //           ),
+              //         ),
+              //         Text(
+              //           '${imageFilenames[index]['typePhoto']}',
+              //           style: TextStyle(fontFamily: "Opensans", fontSize: 12),
+              //         ),
+              //       ],
+              //     );
+              //   }).toList(),
+              // ),
             ],
           ),
         ),

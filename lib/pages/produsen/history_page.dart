@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 // import 'package:namer_app/components/geolocator.dart';
 import 'package:namer_app/providers/get_user.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'package:namer_app/conn/conn_api.dart';
 import 'package:intl/intl.dart';
@@ -27,6 +28,10 @@ class _HistoryProdusenState extends State<HistoryProdusen> {
 
   List<dynamic> data = [];
   List<dynamic> userdata = [];
+  bool status = false;
+
+  DateFormat formattedDate = new DateFormat();
+  DateFormat formattedTime = new DateFormat();
 
   Future<void> fetchData() async {
     var dataUser = await findUserData();
@@ -46,6 +51,7 @@ class _HistoryProdusenState extends State<HistoryProdusen> {
           data.sort((a, b) =>
               DateTime.parse(b['date']).compareTo(DateTime.parse(a['date'])));
         });
+        // isLoading = false;
       }
       print(data);
       print(userdata);
@@ -54,10 +60,27 @@ class _HistoryProdusenState extends State<HistoryProdusen> {
     }
   }
 
+  sortData(bool status) {
+    setState(() {
+      data.where((item) => item['picked_up'] == status).toList();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     fetchData();
+    // sortData(false);
+
+    initializeDateFormatting('id', null).then((_) {
+      DateTime dateTime = DateTime.now();
+      final idLocale = 'id';
+      final dateFormat = DateFormat.yMMMMEEEEd(idLocale);
+      final timeFormat = DateFormat.Hm(idLocale);
+      formattedDate = dateFormat;
+      formattedTime = timeFormat;
+      setState(() {});
+    });
   }
 
   Future<void> refreshData() async {
@@ -99,29 +122,67 @@ class _HistoryProdusenState extends State<HistoryProdusen> {
                   fontWeight: FontWeight.bold),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-            child: Text(
-              "",
-              // "Klik untuk foto dan itung berat pemilahan sampah",
-              style: TextStyle(
-                fontSize: 12,
-                fontFamily: 'OpenSans',
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
-            child: isLoading
-                ? Text(
-                    "Jalur: ${userdata[0]['jalur']}",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontFamily: 'OpenSans',
-                    ),
-                  )
-                : null,
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+          //   child: Text(
+          //     "",
+          //     // "Klik untuk foto dan itung berat pemilahan sampah",
+          //     style: TextStyle(
+          //       fontSize: 12,
+          //       fontFamily: 'OpenSans',
+          //     ),
+          //   ),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+          //   child: isLoading
+          //       ? Text(
+          //           "Jalur: ${userdata[0]['jalur']}",
+          //           style: TextStyle(
+          //             fontSize: 12,
+          //             fontFamily: 'OpenSans',
+          //           ),
+          //         )
+          //       : null,
+          // ),
+          // Row(
+          //   children: [
+          //     Container(
+          //       margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+          //       child: ElevatedButton(
+          //           style: ButtonStyle(
+          //               backgroundColor:
+          //                   MaterialStateProperty.all(Colors.amber[400]),
+          //               shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          //                   borderRadius: BorderRadius.circular(20)))),
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //             children: [
+          //               Icon(Icons.wifi_protected_setup_sharp),
+          //               Text("Proses")
+          //             ],
+          //           ),
+          //           onPressed: () {
+          //             sortData(false);
+          //             print(data);
+          //           }),
+          //     ),
+          //     ElevatedButton(
+          //         style: ButtonStyle(
+          //             backgroundColor:
+          //                 MaterialStateProperty.all(Colors.green[400]),
+          //             shape: MaterialStateProperty.all(RoundedRectangleBorder(
+          //                 borderRadius: BorderRadius.circular(20)))),
+          //         child: Row(
+          //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          //           children: [Icon(Icons.done), Text("Selesai")],
+          //         ),
+          //         onPressed: () {
+          //           sortData(true);
+          //           print(data);
+          //         })
+          //   ],
+          // ),
           !isLoading
               ? Center(
                   child: CircularProgressIndicator(),
@@ -140,7 +201,9 @@ class _HistoryProdusenState extends State<HistoryProdusen> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      return DetailHistoryPickup(history: data[index],);
+                                      return DetailHistoryPickup(
+                                        history: data[index],
+                                      );
                                     },
                                   ),
                                 );
@@ -154,14 +217,14 @@ class _HistoryProdusenState extends State<HistoryProdusen> {
                               // data[index]['picked_up'] ? Text(
                               //     'Sudah Diambil') : Text('Belum Diambil'),
                               title: Text(
-                                  '${DateFormat('EEE, dd MMMM yy').format(DateTime.parse(data[index]['date']))}'),
+                                  '${formattedDate.format(DateTime.parse(data[index]['date']))}'),
                               // subtitle: Text("Kode Jalur: ${data[index]['jalur']}"),
                               subtitle: data[index]['image'] == null ||
                                       data[index]['image'].length == 0
                                   ? Text("Dipilah: Tidak")
                                   : Text("Dipilah: Ya "),
                               trailing: Text(
-                                  '${DateFormat('HH.mm').format(DateTime.parse(data[index]['date']))}'),
+                                  '${formattedTime.format(DateTime.parse(data[index]['date']))}'),
                               // title: Text('${DateFormat('EEE, dd MM yy, HH:mm').format(DateTime.parse(data[index]['date']))}'),
                             ),
                           );

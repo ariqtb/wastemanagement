@@ -36,8 +36,9 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   final handphoneController = TextEditingController();
   final roleController = TextEditingController();
   final jalurController = TextEditingController();
-  final roleList = ['IRT', 'Pengepul', 'Petugas TPS'];
-  String roleSelected = "Pengepul";
+  final roleList = ['Produsen', 'Kolektor'];
+  // final roleList = ['Produsen', 'Kolektor', 'Petugas TPS'];
+  String roleSelected = "Kolektor";
 
   bool loading = false;
   bool logged = false;
@@ -45,6 +46,8 @@ class _RegisterWidgetState extends State<RegisterWidget> {
   bool buttonDisabled = false;
   bool _isPasswordVisible = false;
   bool _isPasswordVisible2 = false;
+
+  var _text = '';
 
   @override
   void dispose() {
@@ -55,18 +58,67 @@ class _RegisterWidgetState extends State<RegisterWidget> {
     super.dispose();
   }
 
-  String? get _errorText {
+  String? get _errorTextEmail {
     final email = emailController.value.text;
-    final password = passwordController.value.text;
-    final password2 = password2Controller.value.text;
-    final name = nameController.value.text;
-    final address = addressController.value.text;
-    final handphone = handphoneController.value.text;
-    final role = roleController.value.text;
-    final jalur = jalurController.value.text;
 
-    if (email.isEmpty || password.isEmpty || password2.isEmpty) {
-      return 'Can\'t be empty';
+    if (email.isEmpty) {
+      return 'Tidak boleh kosong';
+    }
+    if (EmailValidator.validate(email) == false) {
+      return 'Masukan format email dengan benar';
+    }
+    return null;
+  }
+
+  String? get _errorTextPassword {
+    final password = passwordController.value.text;
+
+    if (password.isEmpty) {
+      return 'Tidak boleh kosong';
+    }
+    if (password.length < 6) {
+      return 'Password terlalu pendek';
+    }
+
+    return null;
+  }
+
+  String? get _errorTextPassword2 {
+    final password2 = password2Controller.value.text;
+
+    if (password2.isEmpty) {
+      return 'Tidak boleh kosong';
+    }
+    if (password2.length < 6) {
+      return 'Password terlalu pendek';
+    }
+
+    return null;
+  }
+
+  String? get _errorTextName {
+    final name = nameController.value.text;
+
+    if (name.isEmpty) {
+      return 'Tidak boleh kosong';
+    }
+    return null;
+  }
+
+  String? get _errorTextHandphone {
+    final handphone = handphoneController.value.text;
+
+    if (handphone.isEmpty) {
+      return 'Tidak boleh kosong';
+    }
+    return null;
+  }
+
+  String? get _errorTextAddress {
+    final address = addressController.value.text;
+
+    if (address.isEmpty) {
+      return 'Tidak boleh kosong';
     }
     return null;
   }
@@ -145,8 +197,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             content: SingleChildScrollView(
               child: ListBody(
                 children: [
-                  // Text(
-                  //     'Silahkan cek kembali email dan password yang terdaftar'),
                   Text(status),
                 ],
               ),
@@ -178,7 +228,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
             children: <Widget>[
               Container(
                   alignment: Alignment.center,
-                  padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                   child: const Text(
                     'Waste App',
                     style: TextStyle(
@@ -188,76 +238,92 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                   )),
               Container(
                   alignment: Alignment.center,
-                  padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                   child: const Text(
                     'Daftar',
                     style: TextStyle(fontSize: 20),
                   )),
               Container(
-                padding: const EdgeInsets.fromLTRB(10,20,10,5),
+                padding: const EdgeInsets.fromLTRB(10, 20, 10, 5),
                 child: TextFormField(
                   controller: nameController,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                     border: OutlineInputBorder(),
+                    errorText: submitted ? _errorTextName : null,
                     labelText: 'Nama',
-                    // errorText: _errorText,
                   ),
+                  onChanged: (text) => setState(() {
+                    _text;
+                  }),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: TextFormField(
                   controller: emailController,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                     border: OutlineInputBorder(),
                     labelText: 'Email',
-                    // errorText: _errorText,
+                    errorText: submitted ? _errorTextEmail : null,
                   ),
+                  onChanged: (text) => setState(() {
+                    _text;
+                  }),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: TextFormField(
                   obscureText: !_isPasswordVisible,
                   controller: passwordController,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                    border: OutlineInputBorder(),
-                    labelText: 'Password',
-                    suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },
-                            icon: _isPasswordVisible
-                                ? Icon(Icons.visibility)
-                                : Icon(Icons.visibility_off))
-                  ),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                      border: OutlineInputBorder(),
+                      errorText: submitted ? _errorTextPassword : null,
+                      labelText: 'Password',
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible = !_isPasswordVisible;
+                            });
+                          },
+                          icon: _isPasswordVisible
+                              ? Icon(Icons.visibility)
+                              : Icon(Icons.visibility_off))),
+                  onChanged: (text) => setState(() {
+                    _text;
+                  }),
                 ),
               ),
               Container(
                 width: 200,
-                padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: TextFormField(
                   obscureText: !_isPasswordVisible2,
                   controller: password2Controller,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                    border: OutlineInputBorder(),
-                    labelText: 'Konfirmasi Password',
-                    suffixIcon: IconButton(
-                            onPressed: () {
-                              setState(() {
-                                _isPasswordVisible2 = !_isPasswordVisible2;
-                              });
-                            },
-                            icon: _isPasswordVisible2
-                                ? Icon(Icons.visibility)
-                                : Icon(Icons.visibility_off))
-                  ),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                      border: OutlineInputBorder(),
+                      errorText: submitted ? _errorTextPassword2 : null,
+                      labelText: 'Konfirmasi Password',
+                      suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible2 = !_isPasswordVisible2;
+                            });
+                          },
+                          icon: _isPasswordVisible2
+                              ? Icon(Icons.visibility)
+                              : Icon(Icons.visibility_off))),
+                  onChanged: (text) => setState(() {
+                    _text;
+                  }),
                 ),
               ),
               // Row(
@@ -310,30 +376,39 @@ class _RegisterWidgetState extends State<RegisterWidget> {
               //   ],
               // ),
               Container(
-                padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: TextFormField(
                   controller: handphoneController,
+                  keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                     border: OutlineInputBorder(),
+                    errorText: submitted ? _errorTextHandphone : null,
                     labelText: 'Nomor HP',
-                    // errorText: _errorText,
                   ),
+                  onChanged: (text) => setState(() {
+                    _text;
+                  }),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.fromLTRB(10,5,10,5),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: TextFormField(
                   keyboardType: TextInputType.multiline,
                   minLines: 1,
                   maxLines: 4,
                   controller: addressController,
                   decoration: InputDecoration(
-                    contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                     border: OutlineInputBorder(),
+                    errorText: submitted ? _errorTextAddress : null,
                     labelText: 'Alamat',
-                    // errorText: _errorText,
                   ),
+                  onChanged: (text) => setState(() {
+                    _text;
+                  }),
                 ),
               ),
               Container(
@@ -358,36 +433,49 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                     icon:
                         Icon(Icons.arrow_drop_down_circle, color: Colors.green),
                   )),
-              Container(
-                margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
-                decoration: BoxDecoration(
-                  color: Colors.green[50],
-                ),
-                child: Text(
-                  "Harap jalur telah disesuaikan atau ditentukan agar IRT dan pengepul mempunyai jalur yang sama",
-                  style: TextStyle(fontFamily: 'Opensans', color: Colors.green),
-                ),
-              ),
-              roleSelected == "Petugas TPS"
-                  ? Container()
-                  : Container(
-                      padding: const EdgeInsets.fromLTRB(10,10,10,5),
-                      child: TextFormField(
-                        controller: jalurController,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                          border: OutlineInputBorder(),
-                          labelText: 'Jalur',
-                          // errorText: _errorText,
-                        ),
-                      ),
-                    ),
+              // Container(
+              //   margin: EdgeInsets.fromLTRB(10, 20, 10, 0),
+              //   decoration: BoxDecoration(
+              //     color: Colors.green[50],
+              //   ),
+              //   child: Text(
+              //     "Harap jalur telah disesuaikan atau ditentukan agar produsen dan kolektor mempunyai jalur yang sama",
+              //     style: TextStyle(fontFamily: 'Opensans', color: Colors.green),
+              //   ),
+              // ),
+              // roleSelected == "Petugas TPS"
+              //     ? Container()
+              //     : Container(
+              //         padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+              //         child: TextFormField(
+              //           controller: jalurController,
+              //           decoration: InputDecoration(
+              //             contentPadding: EdgeInsets.symmetric(
+              //                 vertical: 10, horizontal: 12),
+              //             border: OutlineInputBorder(),
+              //             labelText: 'Jalur',
+              //             // errorText: _errorText,
+              //           ),
+              //         ),
+              //       ),
               Container(
                   padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
                   height: 65,
                   child: ElevatedButton(
                     child: const Text('Daftar'),
                     onPressed: () async {
+                      setState(() {
+                        submitted = true;
+                      });
+                      if (_errorTextEmail != null ||
+                          _errorTextPassword != null ||
+                          _errorTextPassword2 != null ||
+                          _errorTextName != null ||
+                          _errorTextHandphone != null ||
+                          _errorTextAddress != null) {
+                        print(_errorTextEmail);
+                        return null;
+                      }
                       if (!buttonDisabled) {
                         setState(() {
                           loading = true;
@@ -398,6 +486,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                           loading = false;
                           logged = true;
                           buttonDisabled = false;
+                          submitted = false;
                         });
                       }
                     },

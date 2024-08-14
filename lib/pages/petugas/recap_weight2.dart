@@ -7,16 +7,16 @@ import 'package:namer_app/pages/petugas/homepage.dart';
 import 'package:namer_app/providers/imagePicker.dart';
 import 'package:path/path.dart';
 import 'package:async/async.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../conn/conn_api.dart';
 // import 'upload_produsen.dart';
 import '../../components/alert.dart';
 
 class RecapWeight extends StatefulWidget {
+  final List<Map<String, dynamic>> photoList;
   final String idWaste;
-  final List<dynamic> dataCache;
-  const RecapWeight({super.key, required this.idWaste, required this.dataCache});
+  const RecapWeight(
+      {super.key, required this.photoList, required this.idWaste});
 
   @override
   State<RecapWeight> createState() => _RecapWeightState();
@@ -27,49 +27,6 @@ class _RecapWeightState extends State<RecapWeight> {
   String wasteid = '';
   Map<String, dynamic> wasteData = {};
   List<Map<String, dynamic>> photoList = [];
-  List<dynamic> dataCache = [];
-  bool upload_status = false;
-
-  Future<void> getData() async {
-    final response = await http.get(Uri.parse('${API_URL}/waste/imageupload'));
-    if (response.statusCode == 200) {
-      if (mounted) {
-        if (json.decode(response.body)['cache'] != null) {
-          setState(() {
-            // isLoading = true;
-            dataCache = json.decode(response.body)['cache'];
-            print(dataCache);
-          });
-        }
-      }
-    } else {
-      throw Exception("Failed to load data");
-    }
-  }
-
-  Future<void> upload() async {
-    final prefs = await SharedPreferences.getInstance();
-    try {
-      setState(() {
-        isLoading = true;
-      });
-      var response = await http.post(Uri.parse('${API_URL}/waste/recordupload'),
-          // headers: {'Content-Type': 'application/json'},
-          body: {'id': wasteid, 'image': json.encode(dataCache)});
-      if (response.statusCode == 200) {
-        setState(() {
-          upload_status = true;
-          isLoading = false;
-          print(response.body);
-        });
-      } else {
-        print(response.statusCode);
-        print(response.body);
-      }
-    } catch (err) {
-      throw Exception(err);
-    }
-  }
 
   Future<void> uploadData(Map<String, dynamic> datas) async {
     var request =
@@ -126,9 +83,8 @@ class _RecapWeightState extends State<RecapWeight> {
     super.initState();
     setState(() {
       wasteid = widget.idWaste;
-      dataCache = widget.dataCache;
+      photoList = widget.photoList;
     });
-    // getData();
   }
 
   @override
@@ -163,8 +119,8 @@ class _RecapWeightState extends State<RecapWeight> {
                       DataColumn(label: Text('Jenis Sampah')),
                       DataColumn(label: Text('Berat Sampah')),
                     ],
-                    rows: dataCache.map((e) {
-                      int index = dataCache.indexOf(e) + 1;
+                    rows: photoList.map((e) {
+                      int index = photoList.indexOf(e) + 1;
                       if (e['weight'] == null) {
                         e['weight'] = 0;
                       }
@@ -183,18 +139,21 @@ class _RecapWeightState extends State<RecapWeight> {
               height: 70,
               child: FloatingActionButton(
                 onPressed: () async {
+                  setState(() {
+                    isLoading = true;
+                  });
                   // print(widget.photoList);
-                  // await uploadImages(widget.idWaste, widget.photoList);
-                  await upload();
-                  if (upload_status) {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return SubmitPage();
-                        },
-                      ),
-                    );
-                  }
+                  await uploadImages(widget.idWaste, widget.photoList);
+                  setState(() {
+                    isLoading = false;
+                  });
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return SubmitPage();
+                      },
+                    ),
+                  );
                 },
                 backgroundColor: Colors.green,
                 child: isLoading
@@ -264,8 +223,7 @@ class SubmitPage extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                HomepagePetugas()),
+                            builder: (BuildContext context) => HomepagePetugas()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

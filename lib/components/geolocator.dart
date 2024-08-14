@@ -5,17 +5,17 @@ import 'package:http/http.dart' as http;
 import '../conn/conn_api.dart';
 import '../providers/get_location.dart';
 
-class Location {
-  String lat;
-  String long;
-  String time;
+// class Location {
+//   String lat;
+//   String long;
+//   String time;
 
-  Location({required this.lat, required this.long, required this.time});
+//   Location({required this.lat, required this.long, required this.time});
 
-  Map<String, dynamic> location() {
-    return {"lat": lat, "long": long, "time": time};
-  }
-}
+//   Map<String, dynamic> location() {
+//     return {"lat": lat, "long": long, "time": time};
+//   }
+// }
 
 List<Map<String, dynamic>> waste = [];
 List<Map<String, dynamic>> location = [];
@@ -45,22 +45,22 @@ Future<void> stopWaste() async {
   }
 }
 
-Future findUserData() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? email = prefs.getString('email');
+// Future findUserData() async {
+//   SharedPreferences prefs = await SharedPreferences.getInstance();
+//   String? email = prefs.getString('email');
 
-  try {
-    Response response = await http
-        .get(Uri.parse('https://waste.tubagusariq.repl.co/users/${email}'));
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      return "${response.statusCode}";
-    }
-  } catch (err) {
-    return "err ${err}";
-  }
-}
+//   try {
+//     Response response = await http
+//         .get(Uri.parse('https://waste.tubagusariq.repl.co/users/${email}'));
+//     if (response.statusCode == 200) {
+//       return json.decode(response.body);
+//     } else {
+//       return "${response.statusCode}";
+//     }
+//   } catch (err) {
+//     return "err ${err}";
+//   }
+// }
 
 Future wastePOST(String currentDate) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:namer_app/pages/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> showDialogSuccess(BuildContext context, msg) async {
   return showDialog(
@@ -76,7 +78,24 @@ Future<bool?> confirmDialog(BuildContext context, msg) async {
           ));
 }
 
+Future<bool?> alertDialog(BuildContext context, msg) async {
+  return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            title: Text('${msg[0]}'),
+            content: Text('${msg[1]}'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text('Ya')),
+            ],
+          ));
+}
+
 Future<bool?> exitDialog(BuildContext context, msg) async {
+  final prefs = await SharedPreferences.getInstance();
   return showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -90,8 +109,16 @@ Future<bool?> exitDialog(BuildContext context, msg) async {
                   child: Text('Tidak')),
               TextButton(
                   onPressed: () {
-                    Navigator.pop(context, true);
-                    Navigator.pop(context, true);
+                    prefs.remove('email');
+                    prefs.remove('jalur');
+                    prefs.remove('role');
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return MyStatefulWidget();
+                        },
+                      ),
+                    );
                   },
                   child: Text('Ya')),
             ],

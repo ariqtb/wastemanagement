@@ -33,6 +33,7 @@ class AddImage extends StatefulWidget {
 class AddImageState extends State<AddImage> {
   String type = 'Organik';
   num? weightValue;
+  num weightTotal = 0;
   int selectedIndex = 0;
   String idWaste = '';
   final picker = ImagePicker();
@@ -43,8 +44,19 @@ class AddImageState extends State<AddImage> {
   Map<String, dynamic> wasteData = {};
   int noDetail = 0;
 
-  List<String> page2 = ['Organik', 'Anorganik', 'B3', 'Residu', 'selesai'];
-  List<String> page = ['Organik', 'Hewani', 'Hijauan', 'Keras', 'Anorganik', 'Valuable', 'Non-Valuable', 'B3', 'Residu', 'selesai'];
+  List<String> page = ['Organik', 'Anorganik', 'B3', 'Residu'];
+  List<String> page2 = [
+    'Organik',
+    'Hewani',
+    'Hijauan',
+    'Keras',
+    'Anorganik',
+    'Valuable',
+    'Non-Valuable',
+    'B3',
+    'Residu',
+    'selesai'
+  ];
   // int pageDetailSelected = 0;
   // bool onDetail = false;
 
@@ -95,230 +107,305 @@ class AddImageState extends State<AddImage> {
           automaticallyImplyLeading: true,
           title: Text('${page[mainPageSelected]}'),
         ),
-        body: Padding(
-          padding: EdgeInsets.fromLTRB(40, 0, 40, 0),
+        body: Container(
+          padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _imageFile != null
                   ? Image.file(
                       _imageFile!,
                       height: 200,
                     )
-                  : Container(
-                      padding: EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.green, width: 3),
-                      ),
-                      child: Text('Belum ada foto yang dipilih')),
-              SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                onPressed: getImageFromCamera,
-                child: Text('Ambil Foto'),
-              ),
+                  : Column(
+                      children: [
+                        Container(
+                            padding: EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.green, width: 3),
+                            ),
+                            child: Text('Belum ada foto yang dipilih')),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        ElevatedButton(
+                          onPressed: getImageFromCamera,
+                          child: Text('Ambil Foto'),
+                        ),
+                      ],
+                    ),
               // SizedBox(
               //   height: 50,
               // ),
               // Row(
               //   children: [
-              Row(
+              Column(
                 children: [
-                  Flexible(
-                    child: TextField(
-                      controller: weightController,
-                      keyboardType:
-                          TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+\.?\d{0,2}')),
-                      ],
-                      decoration: InputDecoration(
-                        labelText: 'Berat Sampah',
-                      ),
-                      onChanged: (value) {
-                        // print(value);
-                        print(
-                            "controller: ${weightController.text.toString()}");
-                        print(
-                            "controller: ${num.tryParse(weightController.text).runtimeType}");
-                        //     setState(() {
-                        // weightValue =
-                        //     num.parse(weightController.text.toString());
-
-                        //     });
-                        // weightController.text = value;
-                      },
-                    ),
-                  ),
-                  Column(
+                  Row(
                     children: [
-                      // Container(
-                      //   child: Text('Masukkan berat'),
-                      // ),
-                      DropdownButtonHideUnderline(
-                        child: SingleChildScrollView(
-                          physics: BouncingScrollPhysics(),
-                          child: DropdownButton<num>(
-                            // value: weightValue,
-                            items: items
-                                .map((num value) => DropdownMenuItem<num>(
-                                      value: value,
-                                      child: Text('${value} Kg'),
-                                    ))
-                                .toList(),
-                            hint: Text('Berat/Kg'),
-                            onChanged: (num? value) {
-                              setState(() {
-                                weightValue = value;
-                                weightController.text = value.toString();
-                              });
-                              print(weightValue);
-                            },
+                      Flexible(
+                        child: TextField(
+                          controller: weightController,
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d+\.?\d{0,2}')),
+                          ],
+                          decoration: InputDecoration(
+                            labelText: 'Berat Sampah',
                           ),
+                          onChanged: (value) {
+                            // print(value);
+                            print(
+                                "controller: ${weightController.text.toString()}");
+                            print(
+                                "controller: ${num.tryParse(weightController.text).runtimeType}");
+                            //     setState(() {
+                            // weightValue =
+                            //     num.parse(weightController.text.toString());
+
+                            //     });
+                            // weightController.text = value;
+                          },
                         ),
                       ),
+                      Column(
+                        children: [
+                          // Container(
+                          //   child: Text('Masukkan berat'),
+                          // ),
+                          DropdownButtonHideUnderline(
+                            child: SingleChildScrollView(
+                              physics: BouncingScrollPhysics(),
+                              child: DropdownButton<num>(
+                                // value: weightValue,
+                                items: items
+                                    .map((num value) => DropdownMenuItem<num>(
+                                          value: value,
+                                          child: Text('${value} Kg'),
+                                        ))
+                                    .toList(),
+                                hint: Text('Berat/Kg'),
+                                onChanged: (num? value) {
+                                  setState(() {
+                                    weightValue = value;
+                                    weightController.text = value.toString();
+                                  });
+                                  print("waduh${weightValue}");
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      ElevatedButton(
+                        child: Icon(
+                          Icons.add,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            if (weightController.text.toString() != null) {
+                              weightTotal += num.tryParse(
+                                  weightController.text.toString())!;
+                              weightController.clear();
+                              weightValue = weightTotal;
+                            }
+                            print("KACAW: ${weightTotal}");
+                            print("KACAW: ${weightValue}");
+                          });
+                        },
+                      )
                     ],
                   ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              "Total Berat: ",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            Text(
+                              "${weightTotal}",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        ElevatedButton(
+                          child: Icon(Icons.refresh),
+                          onPressed: () {
+                            setState(() {
+                              weightTotal = 0;
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  ),
                 ],
-              ),
-              SizedBox(
-                height: 30,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  mainPageSelected == 8
-                      ? Flexible(
-                          child: IconButton(
-                            iconSize: 110,
-                            icon: const Icon(
-                              Icons.play_arrow_rounded,
-                            ),
-                            onPressed: () async {
-                              if (mainPageSelected < 9) {
-                                await addImageList(
-                                    type,
-                                    _imageFile,
-                                    num.tryParse(weightController.text),
-                                    photoList);
-                                if (mainPageSelected < 8) {
-                                  setState(() {
-                                    weightValue = 0.0;
-                                    weightController.text = '';
-                                    mainPageSelected++;
-                                  });
-                                }
-                              }
-                              setState(() {
-                                _imageFile = null;
-                                weightValue = null;
-                                type = page[mainPageSelected];
-                              });
-                              num valOrganik = 0;
-                              num valAnorganik = 0;
-                              print(" VALUEEE ${photoList.runtimeType}");
-                              for (int i = 0; i < photoList.length; i++) {
-                                Map<String, dynamic> data = photoList[i];
-                                String typephoto = data['typePhoto'];
-                                // num weight = data['weight'];
+                  // mainPageSelected == 8
+                  //     ?
+                  Flexible(
+                    child: IconButton(
+                      iconSize: 110,
+                      icon: const Icon(
+                        Icons.play_arrow_rounded,
+                      ),
+                      onPressed: () async {
+                        if (weightValue != null && _imageFile == null) {
+                            await alertDialog(context, [
+                              ...[
+                                'Peringatan',
+                                'Ambil foto terlebih dahulu'
+                              ]
+                            ]);
+                            return;
+                          }
+                        if (mainPageSelected < page.length) {
+                          await addImageList(type, _imageFile,
+                              weightValue, photoList);
+                          // if (mainPageSelected < 8) {
+                          if (mainPageSelected + 1 == page.length) {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return RecapImage(
+                                      photoList: photoList, idWaste: idWaste);
+                                },
+                              ),
+                            );
+                          } else {
+                            setState(() {
+                              weightValue = 0.0;
+                              weightController.text = '';
+                              mainPageSelected++;
+                              _imageFile = null;
+                              weightValue = null;
+                              type = page[mainPageSelected];
+                              weightTotal =0;
+                            });
+                          }
+                          // }
+                        }
+                        // setState(() {});
+                        // num valOrganik = 0;
+                        // num valAnorganik = 0;
+                        // print(" VALUEEE ${photoList.runtimeType}");
+                        // for (int i = 0; i < photoList.length; i++) {
+                        //   Map<String, dynamic> data = photoList[i];
+                        //   String typephoto = data['typePhoto'];
+                        //   // num weight = data['weight'];
 
-                                if (typephoto == 'Hewani' ||
-                                    typephoto == 'Hijauan' ||
-                                    typephoto == 'Keras') {
-                                  valOrganik += data['weight']!;
-                                  print(
-                                      'aaaaa ${photoList[0]['weight'] = valOrganik}');
-                                }
-                                if (typephoto == 'Valuable' ||
-                                    typephoto == 'Non-Valuable') {
-                                  valAnorganik += data['weight']!;
-                                  print(
-                                      'bbbb ${photoList[4]['weight'] = valAnorganik}');
-                                }
-                              }
-                              print(" VALUEEEorganik ${valOrganik}");
-                              print(" VALUEEEanorganik ${valAnorganik}");
-                              setState(() {
-                                mainPageSelected = 0;
-                              });
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    return RecapImage(
-                                        photoList: photoList, idWaste: idWaste);
-                                  },
-                                ),
-                              );
-                            },
-                          ),
-                        )
-                      : Flexible(
-                          child: IconButton(
-                            iconSize: 110,
-                            icon: const Icon(
-                              Icons.play_arrow_rounded,
+                        //   if (typephoto == 'Hewani' ||
+                        //       typephoto == 'Hijauan' ||
+                        //       typephoto == 'Keras') {
+                        //     valOrganik += data['weight']!;
+                        //     print(
+                        //         'aaaaa ${photoList[0]['weight'] = valOrganik}');
+                        //   }
+                        //   if (typephoto == 'Valuable' ||
+                        //       typephoto == 'Non-Valuable') {
+                        //     valAnorganik += data['weight']!;
+                        //     print(
+                        //         'bbbb ${photoList[4]['weight'] = valAnorganik}');
+                        //   }
+                        // }
+                        // print(" VALUEEEorganik ${valOrganik}");
+                        // print(" VALUEEEanorganik ${valAnorganik}");
+                        // setState(() {
+                        //   mainPageSelected = 0;
+                        // });
+                        else {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return RecapImage(
+                                    photoList: photoList, idWaste: idWaste);
+                              },
                             ),
-                            onPressed: () async {
-                              if (num.tryParse(weightController.text) != null &&
-                                  _imageFile == null) {
-                                await alertDialog(context, [
-                                  ...[
-                                    'Peringatan',
-                                    'Ambil foto terlebih dahulu'
-                                  ]
-                                ]);
-                                return;
-                              }
-                              if (mainPageSelected == 0 &&
-                                  num.tryParse(weightController.text) != null) {
-                                setState(() {
-                                  mainPageSelected = 3;
-                                });
-                                print("2object");
-                              }
-                              if (mainPageSelected == 4 &&
-                                  num.tryParse(weightController.text) != null) {
-                                setState(() {
-                                  mainPageSelected = 6;
-                                });
-                                print("object");
-                              }
-                              if (mainPageSelected < 9) {
-                                await addImageList(
-                                    type,
-                                    _imageFile,
-                                    num.tryParse(weightController.text),
-                                    photoList);
-                                if (mainPageSelected < 8) {
-                                  setState(() {
-                                    weightValue = 0.0;
-                                    weightController.text = '';
-                                    mainPageSelected++;
-                                  });
-                                }
-                              }
-                              setState(() {
-                                _imageFile = null;
-                                weightValue = null;
-                                type = page[mainPageSelected];
-                              });
-                              // print("pageselected: ${pageSelected}");
-                              if (photoList.length >= 9) {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return RecapImage(
-                                          photoList: photoList,
-                                          idWaste: idWaste);
-                                    },
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
+                          );
+                        }
+                      },
+                    ),
+                  )
+                  // : Flexible(
+                  //     child: IconButton(
+                  //       iconSize: 110,
+                  //       icon: const Icon(
+                  //         Icons.play_arrow_rounded,
+                  //       ),
+                  //       onPressed: () async {
+                  //         // if (num.tryParse(weightController.text) != null &&
+                  //         print("halo ${weightValue}");
+                  //         print("halo2 ${_imageFile}");
+                  //         if (weightValue != null && _imageFile == null) {
+                  //           await alertDialog(context, [
+                  //             ...[
+                  //               'Peringatan',
+                  //               'Ambil foto terlebih dahulu'
+                  //             ]
+                  //           ]);
+                  //           return;
+                  //         }
+                  //         if (mainPageSelected == 0 &&
+                  //             num.tryParse(weightController.text) != null) {
+                  //           setState(() {
+                  //             mainPageSelected = 3;
+                  //           });
+                  //           print("2object");
+                  //         }
+                  //         if (mainPageSelected == 4 &&
+                  //             num.tryParse(weightController.text) != null) {
+                  //           setState(() {
+                  //             mainPageSelected = 6;
+                  //           });
+                  //           print("object");
+                  //         }
+                  //         if (mainPageSelected < 9) {
+                  //           await addImageList(
+                  //               type,
+                  //               _imageFile,
+                  //               num.tryParse(weightController.text),
+                  //               photoList);
+                  //           if (mainPageSelected < 8) {
+                  //             setState(() {
+                  //               weightValue = 0.0;
+                  //               weightController.text = '';
+                  //               mainPageSelected++;
+                  //             });
+                  //           }
+                  //         }
+                  //         setState(() {
+                  //           _imageFile = null;
+                  //           weightValue = null;
+                  //           type = page[mainPageSelected];
+                  //         });
+                  //         // print("pageselected: ${pageSelected}");
+                  //         if (photoList.length >= 9) {
+                  //           Navigator.of(context).pushReplacement(
+                  //             MaterialPageRoute(
+                  //               builder: (context) {
+                  //                 return RecapImage(
+                  //                     photoList: photoList,
+                  //                     idWaste: idWaste);
+                  //               },
+                  //             ),
+                  //           );
+                  //         }
+                  //       },
+                  //     ),
+                  //   ),
                   // mainPageSelected == 0 || mainPageSelected == 1
                   //     ? Flexible(
                   //         child: IconButton(

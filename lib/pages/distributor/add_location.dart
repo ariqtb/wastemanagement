@@ -1,14 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
-// import 'geolocator.dart';
-import '../pages/recap_pickup_only.dart';
-import '../providers/get_location.dart';
-import 'alert.dart';
-import '../conn/conn_api.dart';
+import '../../conn/conn_api.dart';
+
+import 'recap_pickup.dart';
+// import '../../providers/get_location.dart';
+import 'getWaste.dart';
+import '../../components/alert.dart';
+import '../login.dart';
+import '../change_password.dart';
 
 class AddLocation extends StatefulWidget {
   AddLocation({
@@ -36,6 +38,7 @@ class _AddLocationState extends State<AddLocation> {
   List<Map<String, dynamic>> listProdusen = [];
   Map<String, dynamic> wasteData = {};
   List<Map<String, dynamic>> locationWaste = [];
+  bool isLoading = true;
 
   late String currentDate;
   late String latitude;
@@ -46,9 +49,18 @@ class _AddLocationState extends State<AddLocation> {
   Future getProdusenList() async {
     final prefs = await SharedPreferences.getInstance();
 
+    Response response =
+        await http.get(Uri.parse('${API_URL}/produsen/unpickup'));
+    await prefs.setString('listpickup', response.body.toString());
+
     setState(() {
       getProdusen = prefs.getString('listpickup');
       listProdusen = List<Map<String, dynamic>>.from(json.decode(getProdusen!));
+    });
+    Future.delayed(Duration(seconds: 4), () {
+      setState(() {
+        isLoading = false;
+      });
     });
   }
 
@@ -56,13 +68,36 @@ class _AddLocationState extends State<AddLocation> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getProdusenList();
-    // print(getProdusen);
+    // getProdusenList();
+
+    print("HALO${listProdusen}");
   }
 
   @override
   Widget build(BuildContext context) {
     final List<PopupMenuEntry<String>> menuItems = [
+      PopupMenuItem<String>(
+        value: 'Ubahpassword',
+        child: Container(
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            padding: EdgeInsets.symmetric(vertical: 10.0),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.password_outlined,
+                  color: Colors.black87,
+                ),
+                SizedBox(width: 5),
+                Text(
+                  'Ubah Password',
+                  style: TextStyle(fontSize: 15),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       PopupMenuItem<String>(
         value: 'Keluar',
         child: Container(
@@ -88,7 +123,7 @@ class _AddLocationState extends State<AddLocation> {
     ];
     return WillPopScope(
       onWillPop: () async {
-        final pop = await confirmDialog(context, [
+        final pop = await exitDialog(context, [
           ...['Konfirmasi', 'Apakah anda ingin keluar?']
         ]);
         return pop ?? false;
@@ -104,10 +139,17 @@ class _AddLocationState extends State<AddLocation> {
               ),
               offset: Offset(0, 50),
               itemBuilder: (BuildContext context) => menuItems,
-              onSelected: (String selectedItem) {
+              onSelected: (String selectedItem) async {
                 if (selectedItem == 'Keluar') {
-                  // print('Selected itessm: $selectedItem');
-                  Navigator.of(context).pop();
+                  final pop = await exitDialog(context, [
+                    ...['Konfirmasi', 'Apakah anda ingin keluar']
+                  ]);
+                }
+                if (selectedItem == 'Ubahpassword') {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
+                    return ChangePassword();
+                  }));
                 }
                 // Handle selected item
               },
@@ -206,12 +248,29 @@ class _AddLocationState extends State<AddLocation> {
                                     buttonDisabled = true;
                                   });
                                   // getLocationWaste()
-                                  await addLocationWaste(
-                                      listProdusen, locationWaste);
-                                  locationWaste.forEach((element) {
-                                    print("ini: ${element['produsen_info']['status']}");
-                                    print("ini: ${element['produsen_info']['distanceInMeters']}");
-                                  });
+                                  await getProdusenList();
+                                  print("listProdusen: ${listProdusen}");
+                                  try {
+                                    await addLocationWaste(
+                                        listProdusen, locationWaste);
+                                  } catch (err) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                            content: Text(
+                                                'Izin akses lokasi ditolak, perizinan lokasi dibutuhkan untuk mengakses pengambilan sampah.')));
+                                    setState(() {
+                                      loading = false;
+                                      buttonDisabled = false;
+                                    });
+                                    return;
+                                  }
+                                  // locationWaste.forEach((element) {
+                                  // print(
+                                  //     "ini: ${element['produsen_info']['status']}");
+                                  // print(
+                                  //     "ini: ${element['produsen_info']['distanceInMeters']}");
+                                  // });
+                                  print(locationWaste);
                                   setState(() {
                                     loading = false;
                                     buttonDisabled = false;

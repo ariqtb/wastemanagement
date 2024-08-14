@@ -1,18 +1,5 @@
-import 'dart:ffi';
-import 'dart:io';
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
-import 'package:namer_app/pages/login.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
-import 'package:namer_app/geolocator.dart';
-import 'package:namer_app/providers/waste_data.dart';
-import '../components/show_pickup.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../components/show_data_pickup.dart';
 import '../pages/history_pickup.dart';
